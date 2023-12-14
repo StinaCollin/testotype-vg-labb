@@ -6,8 +6,8 @@ describe('GET /', () => {
   it('should return status code 200 and a welcome message', async () => {  // Test för rotendpointen
     const response = await request(app).get('/');
 
-    expect(response.status).toBe(200);
-    expect(response.text).toBe('Welcome to my API!');
+    expect(response.status).toBe(200);  // Förväntar mig att få tillbaka statuskod 200
+    expect(response.text).toBe('Welcome to my API!');  // Förväntar mig att få tillbaka mitt meddelande
   });
 
    
