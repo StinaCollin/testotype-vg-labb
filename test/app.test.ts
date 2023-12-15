@@ -36,7 +36,7 @@ describe('POST /contact', () => {
     const response = await request(app)
       .post('/contact')
       .send({
-        // Skickar här in en giltig input eftersom firstname saknas och förväntar mig att få tillbaka ett felmeddelande och statuskod 400
+        // Skickar här in en ogiltig input eftersom firstname saknas och förväntar mig att få tillbaka ett felmeddelande och statuskod 400
         "lastname": "Andersson",
         "email": "anna.andersson@gmail.com",
         "personalnumber": "550713-1405",
@@ -56,7 +56,7 @@ describe('POST /contact', () => {
       const response = await request(app)
         .post('/contact')
         .send({
-          // Skickar här in en giltig input eftersom lastname saknas och förväntar mig att få tillbaka ett felmeddelande och statuskod 400
+          // Skickar här in en ogiltig input eftersom lastname saknas och förväntar mig att få tillbaka ett felmeddelande och statuskod 400
           "firstname": "Anna",
           "email": "anna.andersson@gmail.com",
           "personalnumber": "550713-1405",
@@ -69,6 +69,129 @@ describe('POST /contact', () => {
       expect(response.status).toBe(400);
       expect(response.body).toEqual([
         { "error": "lastname is missing" }            
+      ]);
+    });
+
+    // 3. I mitt tredje test, POST/contacts, utökar jag mina tester för invalid input's för resterande fält, och förväntar mig att få tillbaka ett felmeddelande och statuskod 400
+    it('should return 400 for invalid input', async () => {
+      const response = await request(app)
+        .post('/contact')
+        .send({
+          // Skickar här in en ogiltig input eftersom email saknas och förväntar mig att få tillbaka ett felmeddelande och statuskod 400
+          "firstname": "Anna",
+          "lastname": "Andersson",
+          "personalnumber": "550713-1405",
+          "address": "Utvecklargatan 12",
+          "zipCode": "111 22",
+          "city": "Stockholm",
+          "country": "Sweden"
+        });
+  
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual([
+        { "error": "email is missing" }            
+      ]);
+    });
+
+    it('should return 400 for invalid input', async () => {
+      const response = await request(app)
+        .post('/contact')
+        .send({
+          // Skickar här in en ogiltig input eftersom pers nr saknas och förväntar mig att få tillbaka ett felmeddelande och statuskod 400
+          "firstname": "Anna",
+        "lastname": "Andersson",
+        "email": "anna.andersson@gmail.com",
+        "address": "Utvecklargatan 12",
+        "zipCode": "111 22",
+        "city": "Stockholm",
+        "country": "Sweden"
+        });
+  
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual([
+        { "error": "personalnumber is missing" }            
+      ]);
+    });
+
+
+    it('should return 400 for invalid input', async () => {
+      const response = await request(app)
+        .post('/contact')
+        .send({
+          // Skickar här in en ogiltig input eftersom address saknas och förväntar mig att få tillbaka ett felmeddelande och statuskod 400
+          "firstname": "Anna",
+        "lastname": "Andersson",
+        "email": "anna.andersson@gmail.com",
+        "personalnumber": "550713-1405",
+        "zipCode": "111 22",
+        "city": "Stockholm",
+        "country": "Sweden"
+        });
+  
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual([
+        { "error": "address is missing" }            
+      ]);
+    });
+
+    it('should return 400 for invalid input', async () => {
+      const response = await request(app)
+        .post('/contact')
+        .send({
+          // Skickar här in en ogiltig input eftersom zip code saknas och förväntar mig att få tillbaka ett felmeddelande och statuskod 400
+          "firstname": "Anna",
+        "lastname": "Andersson",
+        "email": "anna.andersson@gmail.com",
+        "personalnumber": "550713-1405",
+        "address": "Utvecklargatan 12",
+        "city": "Stockholm",
+        "country": "Sweden"
+        });
+  
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual([
+        { "error": "zip code is missing" }            
+      ]);
+    });
+
+
+    it('should return 400 for invalid input', async () => {
+      const response = await request(app)
+        .post('/contact')
+        .send({
+          // Skickar här in en ogiltig input eftersom city saknas och förväntar mig att få tillbaka ett felmeddelande och statuskod 400
+          "firstname": "Anna",
+        "lastname": "Andersson",
+        "email": "anna.andersson@gmail.com",
+        "personalnumber": "550713-1405",
+        "address": "Utvecklargatan 12",
+        "zipCode": "111 22",
+        "country": "Sweden"
+        });
+  
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual([
+        { "error": "city is missing" }            
+      ]);
+    });
+
+    it('should return 400 for invalid input', async () => {
+      const response = await request(app)
+        .post('/contact')
+        .send({
+          // Skickar här in en ogiltig input eftersom country saknas och förväntar mig att få tillbaka ett felmeddelande och statuskod 400
+          "firstname": "Anna",
+        "lastname": "Andersson",
+        "email": "anna.andersson@gmail.com",
+        "personalnumber": "550713-1405",
+        "address": "Utvecklargatan 12",
+        "zipCode": "111 22",
+        "city": "Stockholm",
+        });
+  
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual([
+        { "error": "country is missing" }            
       ]);
     });
 
