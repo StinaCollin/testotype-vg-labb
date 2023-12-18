@@ -10,6 +10,8 @@ app.get('/', (req, res) => {  // skriver sedan en rotendpoint som skickar tillba
 });
 
 // I mitt andra test, POST, vill jag testa att jag får tillbaka statuskod 201 vid giltig input, och statuskod 400 vid ogiltig input
+// 3. I mitt tredje test, POST/contacts, utökar jag mina tester för invalid input's för resterande fält, och förväntar mig att få tillbaka ett felmeddelande och statuskod 400
+// så lägger in error meddelanden vid test för resterande fält
 app.post('/contact', (req, res) => {
     const { firstname, lastname, email, personalnumber, address, zipCode, city, country } = req.body;
   
@@ -20,8 +22,32 @@ app.post('/contact', (req, res) => {
     if (!lastname) {
       return res.status(400).json([{ error: 'lastname is missing' }]);
     }
+
+    if (!email) {
+      return res.status(400).json([{ error: 'email is missing' }]);
+    }
   
-    res.status(201).json({});
+    if (!personalnumber) {
+      return res.status(400).json([{ error: 'personalnumber is missing' }]);
+    }
+
+    if (!address) {
+      return res.status(400).json([{ error: 'address is missing' }]);
+    }
+  
+    if (!zipCode) {
+      return res.status(400).json([{ error: 'zipCode is missing' }]);
+    }
+
+    if (!city) {
+      return res.status(400).json([{ error: 'city is missing' }]);
+    }
+  
+    if (!country) {
+      return res.status(400).json([{ error: 'country is missing' }]);
+    }
+
+    res.status(201).json({}); 
   });
 
   

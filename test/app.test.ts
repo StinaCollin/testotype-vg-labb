@@ -150,7 +150,7 @@ describe('POST /contact', () => {
   
       expect(response.status).toBe(400);
       expect(response.body).toEqual([
-        { "error": "zip code is missing" }            
+        { "error": "zipCode is missing" }            
       ]);
     });
 
@@ -195,13 +195,12 @@ describe('POST /contact', () => {
       ]);
     });
 
-          // lägger även in ett test för endpointen /does-not-exist, och förväntar mig att få tillbaka statuskod 404 och ett felmeddelande 
-          it('should return status code 404 and an error message', async () => {
-            const response = await request(app).get('/does-not-exist');
-            expect(response.status).toBe(404);
-            expect(response.text).toBe('Not found');
-    
-        });
+      // lägger även in ett test för endpointen /does-not-exist, och förväntar mig att få tillbaka statuskod 404 och ett felmeddelande 
+      it('should return status code 404 and an error message', async () => {
+        const response = await request(app).get('/does-not-exist');
+        expect(response.status).toBe(404);
+        expect(response.text).toBe('Not found');  
+     });
     
 });
 
