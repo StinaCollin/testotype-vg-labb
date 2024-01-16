@@ -49,48 +49,10 @@ app.post('/contact', (req, res) => {
 
     res.status(201).json({}); 
   });
-
-  app.post('/contact', async (req, res) => {
-    const { firstname, lastname, email, personalnumber, address, zipCode, city, country } = req.body;
-
-    if (!firstname || !lastname || !email || !personalnumber || !address || !zipCode || !city || !country) {
-        return res.status(400).json([{ error: 'Invalid input. Please provide all required fields.' }]);
-    }
-
-    // Utför en geokodning för att få ut lat och lng för den adress som skickas in
-    const coordinates = await geocodeAddress(address);
-
-    if (!coordinates) {
-        return res.status(500).json({ error: 'Error fetching coordinates' });
-    }
-
-    // Sparar sedan ner mina kontakter i min "databas" 
-    const contact = await new Contact({
-        firstname,
-        lastname,
-        email,
-        personalnumber,
-        address,
-        zipCode,
-        city,
-        country,
-        lat: coordinates.lat,
-        lng: coordinates.lng,
-    }).save();
-
-    res.status(201).json(contact);
-});
-
   
   app.use((req, res) => {  
     res.status(404).send('Not found');
   }); 
-
-  app.use((err: Error, req: Request, res: Response, next: NextFunction) => { // lägger in ett error middleware som fångar upp alla fel
-    console.error(err.stack);
-    res.status(500).send('Something went wrong!');
-  });
-  
 
 export default app;
   
