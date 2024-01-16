@@ -5,16 +5,16 @@ import {
     validateText,
   } from '../src/validation';
   
-    // Fjärde testet, blir en ny fil för validering, här testas att jag får tillbaka true för en giltig email, zip, pers.nr & text och false för en ogiltig email/zip/pers.nr/text
+    // Fjärde testet, blir en ny fil för test validering, här testas att jag får tillbaka true för en giltig email, zip, pers.nr & text och false för en ogiltig email/zip/pers.nr/text
 
-  describe('Validation Functions', () => {
+  describe('Validation Functions', () => {  // skriver sedan ett test för att se att jag får tillbaka true för en giltig email
     describe('validateEmail', () => {
       it('should return true for a valid email', () => {
         const result = validateEmail('test@example.com');
         expect(result).toBe(true);
       });
   
-      it('should return false for an invalid email', () => {
+      it('should return false for an invalid email', () => {  // Returnerar false för en ogiltig email, och samma nedan för de olika testerna
         const result = validateEmail('invalid-email');
         expect(result).toBe(false);
       });
@@ -50,7 +50,7 @@ import {
         expect(result).toBe(true);
       });
   
-      it('should return false for invalid text', () => {
+      it('should return false for invalid text', () => { 
         const result = validateText('!@#$%^&*()');
         expect(result).toBe(false);
       });

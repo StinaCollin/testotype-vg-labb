@@ -1,100 +1,29 @@
-import request from 'supertest';
-import nock from 'nock'; 
-import app from '../src/app';
+import nock from "nock";
+import { geocodeAddress } from "../src/geocoding";
 
-// I mitt femte test, GET/contacts, vill jag testa Testa att hämta kontakter och koordinater från databasen.
-// Mocka Geocoding API-anropet för att returnera önskade koordinater.
-// Se till att kontakter i svaret har de förväntade koordinaterna.
-// Öka testtäckningen och förbättra testens robusthet.
-// så att jag får tillbaka statuskod 200 och en lista med kontakter och koordinater
+// 4. I mitt femte test, vill jag testa att jag får tillbaka koordinater för en giltig adress och null vid ogiltig adress
 
-
-describe('GET /contact', () => {
-  it('should return contacts with coordinates', async () => {
-    nock('https://api-ninjas.com')
-      .get('/api/geocoding')
-      .query({ address: 'Utvecklargatan 12' })
+describe("Geocoding API", () => {
+  beforeAll(() => { // innan alla test så mockar jag ut en endpoint som jag sedan kan använda i mina tester
+    nock("https://api.api-ninjas.com")
+      .get("/api/geocoding")
+      .query({ address: "Utvecklargatan 12, 111 22 Stockholm, Sweden" })
       .reply(200, { lat: 59.3251172, lng: 18.0710935 });
-
-    // Simulera att databasen innehåller kontakter med koordinater
-    const contactsWithCoordinates = [
-      {
-        id: '638cfd06f84b41a7be61ebad',
-        firstname: 'Anna',
-        lastname: 'Andersson',
-        email: 'anna.andersson@gmail.com',
-        personalnumber: '550713-1405',
-        address: 'Utvecklargatan 12',
-        zipCode: '111 22',
-        city: 'Stockholm',
-        country: 'Sweden',
-        lat: 59.3251172,
-        lng: 18.0710935,
-      },
-      {
-        "id": "638cfd06f84b41a7be61eadb",
-        "firstname": "Erik",
-        "lastname": "Eriksson",
-        "email": "erik.eriksson@gmail.com",
-        "personalnumber": "740301-1405",
-        "address": "Utvecklargatan 12",
-        "zipCode": "111 22",
-        "city": "Stockholm",
-        "country": "Sweden",
-        "lat": 59.3251172,
-        "lng": 18.0710935
-      },
-    ];
-
-    // Mocka anropet till databasen, använd mockResolvedValue för att returnera ett värde samt jest.spyOn för att kunna hålla koll på funktionen
-    jest.spyOn(database, 'getContacts').mockResolvedValue(contactsWithCoordinates);
-
-    const response = await request(app).get('/contact');
-
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual(contactsWithCoordinates);
   });
 
-  it('should return 404 if contact not found', async () => {
-    nock('https://api-ninjas.com')
-      .get('/api/geocoding')
-      .query({ address: 'Unknown Address' }) // Simulera en okänd adress
-      .reply(404);
-
-    // Mocka anropet till databasen för att returnera INGEN kontakt
-    jest.spyOn(database, 'getContacts').mockResolvedValue([]);
-
-    const response = await request(app).get('/contact');
-
-    expect(response.status).toBe(404);
-    expect(response.body).toEqual({ error: 'Contacts not found' });
+  it("should return coordinates for a valid address", async () => { // skriver sedan ett test för att se att jag får tillbaka koordinater för en giltig adress
+    const coordinates = await geocodeAddress("Utvecklargatan 12, 111 22 Stockholm, Sweden");
+    expect(coordinates).toEqual({ lat: 59.3251172, lng: 18.0710935 });
   });
 
-  it('should handle Geocoding API error', async () => {
-    // Mocka Geocoding API-anropet för att returnera ett FEL
-    nock('https://api-ninjas.com')
-      .get('/api/geocoding')
-      .query({ address: 'Utvecklargatan 12' })
-      .reply(500, { error: 'Geocoding API error' });
+  it("should handle errors gracefully", async () => {
+    nock.cleanAll(); // Tar bort alla tidigare nock intercepts, så att vi kan skapa en ny
+    nock("https://api.api-ninjas.com")
+      .get("/api/geocoding")
+      .query({ address: "InvalidAddress" })
+      .reply(500);
 
-    // Mocka anropet till databasen för att returnera kontakter med koordinater
-    jest.spyOn(database, 'getContacts').mockResolvedValue([
-        {
-            id: '638cfd06f84b41a7be61ebad',
-            firstname: 'Anna',
-            lastname: 'Andersson',
-            email: 'anna.andersson@gmail.com',
-            personalnumber: '550713-1405',
-            address: 'Utvecklargatan 12',
-            zipCode: '111 22',
-            city: 'Stockholm',
-            country: 'Sweden',
-        },
-    ]);
-
-    const response = await request(app).get('/contact');
-
-    expect(response.status).toBe(500);
-    expect(response.body).toEqual({ error: 'Geocoding API error' });
+    const coordinates = await geocodeAddress("InvalidAddress"); // skriver sedan ett test för att se att jag får tillbaka null vid ogiltig adress
+    expect(coordinates).toBeNull();
   });
 });
