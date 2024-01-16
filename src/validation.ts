@@ -1,4 +1,4 @@
-
+// här skriver jag valideringsfunktioner för olika typer av input
 
 export function validateEmail(email: string): boolean {
     // En enkel validering av e-postadressen, tillåter bara bokstäver, siffror, bindestreck, understreck, en @ och en punkt

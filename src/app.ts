@@ -1,11 +1,11 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
+import  Contact  from '../resources/contact/contactModel';
+import { geocodeAddress } from './geocoding';
 
 const app = express();
-
 app.use(express.json());
 
-
-app.get('/', (req, res) => {  // skriver sedan en rotendpoint som skickar tillbaka status och ett meddelande och gör sedan mitt första test
+app.get('/', (req, res) => {  // skriver en rotendpoint som skickar tillbaka status och ett meddelande och gör sedan mitt första test
   res.status(200).send('Welcome to my API!');
 });
 
@@ -50,10 +50,47 @@ app.post('/contact', (req, res) => {
     res.status(201).json({}); 
   });
 
+  app.post('/contact', async (req, res) => {
+    const { firstname, lastname, email, personalnumber, address, zipCode, city, country } = req.body;
+
+    if (!firstname || !lastname || !email || !personalnumber || !address || !zipCode || !city || !country) {
+        return res.status(400).json([{ error: 'Invalid input. Please provide all required fields.' }]);
+    }
+
+    // Utför en geokodning för att få ut lat och lng för den adress som skickas in
+    const coordinates = await geocodeAddress(address);
+
+    if (!coordinates) {
+        return res.status(500).json({ error: 'Error fetching coordinates' });
+    }
+
+    // Sparar sedan ner mina kontakter i min "databas" 
+    const contact = await new Contact({
+        firstname,
+        lastname,
+        email,
+        personalnumber,
+        address,
+        zipCode,
+        city,
+        country,
+        lat: coordinates.lat,
+        lng: coordinates.lng,
+    }).save();
+
+    res.status(201).json(contact);
+});
+
   
-  app.use((req, res) => {
+  app.use((req, res) => {  
     res.status(404).send('Not found');
   }); 
+
+  app.use((err: Error, req: Request, res: Response, next: NextFunction) => { // lägger in ett error middleware som fångar upp alla fel
+    console.error(err.stack);
+    res.status(500).send('Something went wrong!');
+  });
+  
 
 export default app;
   

@@ -1,8 +1,12 @@
 import nock from "nock";
 import { geocodeAddress } from "../src/geocoding";
 
-// 4. I mitt femte test, vill jag testa att jag får tillbaka koordinater för en giltig adress och null vid ogiltig adress
-
+// I mitt femte test, vill jag testa att jag får tillbaka koordinater för en giltig adress och null vid ogiltig adress
+// I mitt femte test, GET/contacts, vill jag testa Testa att hämta kontakter och koordinater från databasen.
+// Mocka Geocoding API-anropet för att returnera önskade koordinater.
+// Se till att kontakter i svaret har de förväntade koordinaterna.
+// Öka testtäckningen och förbättra testens robusthet.
+// så att jag får tillbaka statuskod 200 och en lista med kontakter och koordinater
 describe("Geocoding API", () => {
   beforeAll(() => { // innan alla test så mockar jag ut en endpoint som jag sedan kan använda i mina tester
     nock("https://api.api-ninjas.com")
